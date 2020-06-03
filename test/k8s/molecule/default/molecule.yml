@@ -25,7 +25,7 @@ verifier:
   options:
     s: true
   additional_files_or_dirs:
-    - ../../../resources/tests/*.py
+    - ../../../resources/tests/test_configuration.py
 scenario:
   test_sequence:
     - converge

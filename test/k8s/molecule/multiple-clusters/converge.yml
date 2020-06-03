@@ -1,0 +1,303 @@
+- name: Converge
+  hosts: k8s-cluster
+  connection: local
+  gather_facts: true
+  tasks:
+###################################################################
+################### Clone istio install template ##################
+###################################################################
+    - name: Load variable file
+      include_vars:
+        dir: ../../vars
+    - name: Clone secret template
+      copy:
+        src: /vagrant/k8s/templates/keyfactor-secret-config-file.yaml 
+        dest: /vagrant/k8s/templates/keyfactor-secret-config-file-run.yaml 
+      changed_when: false
+    - name: Clone istio config template
+      copy:
+        src: /vagrant/k8s/templates/single-cluster.yaml
+        dest: /vagrant/k8s/templates/single-cluster-a-run.yaml
+      changed_when: false
+    - name: Clone istio config template
+      copy:
+        src: /vagrant/k8s/templates/single-cluster.yaml
+        dest: /vagrant/k8s/templates/single-cluster-b-run.yaml
+      changed_when: false
+    - name: Clone dns config cluster a template
+      copy:
+        src: /vagrant/k8s/templates/dns.yaml 
+        dest: /vagrant/k8s/templates/dns-a-run.yaml 
+      changed_when: false
+    - name: Clone service entrie cluster a template
+      copy:
+        src: /vagrant/k8s/templates/serviceentry-cluster-a.yaml 
+        dest: /vagrant/k8s/templates/serviceentry-cluster-a-run.yaml
+      changed_when: false
+    - name: Clone dns config cluster b template
+      copy:
+        src: /vagrant/k8s/templates/dns.yaml 
+        dest: /vagrant/k8s/templates/dns-b-run.yaml 
+      changed_when: false
+    - name: Clone service entrie cluster a template
+      copy:
+        src: /vagrant/k8s/templates/serviceentry-cluster-b.yaml 
+        dest: /vagrant/k8s/templates/serviceentry-cluster-b-run.yaml
+      changed_when: false
+###################################################################
+################## Config istio install template ##################
+###################################################################
+    - name: Replace variable values in secret file
+      become: yes
+      become_user: root
+      lineinfile:
+        path: /vagrant/k8s/templates/keyfactor-secret-config-file-run.yaml 
+        # Line to Search/Match against
+        regexp: '{{item.From}}'
+        # Line to Replace with
+        line: '{{item.To}}'
+        state: present
+      with_items:
+        - { From: '__SECRET__NAME__', To: "  name: keyfactor-config"}
+        - { From: '__CONFIG__NAME__', To: "  config.json: |-"}
+        - { From: '__CA__NAME__', To: "      \"caName\": \"{{ caName }}\","}
+        - { From: '__AUTH__TOKEN__', To: "      \"authToken\": \"{{ authToken }}\","}
+        - { From: '__CA__TEMPLATE__', To: "      \"caTemplate\": \"{{ caTemplate }}\","}
+        - { From: '__APP__KEY__', To: "      \"appKey\": \"{{ appKey }}\","  }
+        - { From: '__META__DATA__', To: "      \"metadata\": { \"Cluster\": \"Cluster\", \"Service\": \"Service\", \"PodName\": \"PodName\", \"PodNamespace\": \"PodNamespace\" }"  }
+      changed_when: false
+    - name: Replace variable values in single cluster a with metadata
+      become: yes
+      become_user: root
+      lineinfile:
+        path: /vagrant/k8s/templates/single-cluster-a-run.yaml  
+        # Line to Search/Match against
+        regexp: '{{item.From}}'
+        # Line to Replace with
+        line: '{{item.To}}'
+        state: present
+      with_items:
+        - { From: '__CLUSTER__NAME__', To: "        clusterName: kms.cluster.a"}
+        - { From: '__CA__ADDR__', To: "      caAddress: \"{{ caAddress }}\""}
+        - { From: '__SECRET_NAME__', To: "        secretName: \"keyfactor-config\""}
+        - { From: '__CONFIG__PATH__', To: "        configPath: \"/etc/keyfactor/config.json\""}
+      changed_when: false
+    - name: Replace variable values in single cluster b with metadata
+      become: yes
+      become_user: root
+      lineinfile:
+        path: /vagrant/k8s/templates/single-cluster-b-run.yaml  
+        # Line to Search/Match against
+        regexp: '{{item.From}}'
+        # Line to Replace with
+        line: '{{item.To}}'
+        state: present
+      with_items:
+        - { From: '__CLUSTER__NAME__', To: "        clusterName: kms.cluster.b"}
+        - { From: '__CA__ADDR__', To: "      caAddress: \"{{ caAddress }}\""}
+        - { From: '__SECRET_NAME__', To: "        secretName: \"keyfactor-config\""}
+        - { From: '__CONFIG__PATH__', To: "        configPath: \"/etc/keyfactor/config.json\""}
+      changed_when: false
+
+###################################################################
+################## Config k8s cluster  ############################
+###################################################################
+- name: Converge
+  hosts: master-1
+  gather_facts: true
+  tasks:
+    - name: "Include global tasks"
+      include_role:
+        name: "k8s"  
+    - name: Load variable file
+      include_vars:
+        dir: ../../vars
+    - name: Get cluster info 
+      command: kubectl cluster-info
+      register: kubectl
+      changed_when: false
+    - name: "Create keyfactor-secret file {{ item }} namespace"
+      command: "{{ item }}"
+      register: kubectl
+      changed_when: false
+      loop:
+        - kubectl apply -f /vagrant/k8s/templates/keyfactor-secret-config-file-run.yaml -n foo
+        - kubectl apply -f /vagrant/k8s/templates/keyfactor-secret-config-file-run.yaml -n bar
+        - kubectl apply -f /vagrant/k8s/templates/keyfactor-secret-config-file-run.yaml -n legacy
+        - kubectl apply -f /vagrant/k8s/templates/keyfactor-secret-config-file-run.yaml -n istio-system
+    - name: Create secret generic cacerts
+      command: kubectl create secret generic cacerts -n istio-system --from-file=/vagrant/istio/root-cert.pem
+      register: kubectl
+      changed_when: false
+    - name: Install istio single cluster with secret template 
+      command: /vagrant/istio/release/istioctl-linux-amd64 manifest --set installPackagePath=/vagrant/istio/installs apply -f /vagrant/k8s/templates/single-cluster-a-run.yaml
+      register: kubectl
+      changed_when: false
+    - name: Config auto inject label for namespace
+      command:  "{{ item }}"
+      register: kubectl
+      changed_when: false
+      loop:
+        - kubectl label namespace foo istio-injection=enabled 
+        - kubectl label namespace bar istio-injection=enabled 
+    - name: "Install httbin test service {{ item }}"
+      command:  "{{ item }}"
+      register: kubectl
+      changed_when: false
+      loop:
+        - kubectl apply -f /vagrant/k8s/templates/httpbin.yaml -n foo
+        - kubectl apply -f /vagrant/k8s/templates/httpbin.yaml -n bar
+        - kubectl apply -f /vagrant/k8s/templates/httpbin.yaml -n legacy
+    - name: "Install sleep test service {{ item }}"
+      command:  "{{ item }}"
+      register: kubectl
+      changed_when: false
+      loop:
+        - kubectl apply -f /vagrant/k8s/templates/sleep.yaml -n foo
+        - kubectl apply -f /vagrant/k8s/templates/sleep.yaml -n bar
+        - kubectl apply -f /vagrant/k8s/templates/sleep.yaml -n legacy
+    - name: Install mTLS policy
+      command:  kubectl apply -f /vagrant/k8s/templates/mtls-policy.yaml -n istio-system
+      register: kubectl
+      changed_when: false
+    - name: Get IstioCoreDNS cluster a IP
+      command: kubectl get svc -n istio-system istiocoredns -o jsonpath={.spec.clusterIP}
+      register: kubectl
+      changed_when: false  
+    - name: Update DNS config DNS cluster IP
+      command: "sed -i s#__DNS__CLUSTER__IP__#{{ kubectl.stdout }}# /vagrant/k8s/templates/dns-a-run.yaml"
+      register: kubectl
+      changed_when: false
+      args:
+        warn: false
+    - name: Get IstioIngressGateway Nodeport
+      command: kubectl get svc -n istio-system istio-ingressgateway -o=jsonpath='{.spec.ports[?(@.port==15443)].nodePort}'
+      register: kubectl
+      changed_when: false  
+    - name: Update svc port in service entry config
+      command: "sed -i s#__MTLS__PORT__#{{ kubectl.stdout }}# /vagrant/k8s/templates/serviceentry-cluster-b-run.yaml"
+      register: kubectl
+      changed_when: false
+      args:
+        warn: false
+    - name: Configure DNS in coreDNS
+      command:  kubectl apply -f /vagrant/k8s/templates/dns-a-run.yaml
+      register: kubectl
+      changed_when: false
+#################################################################
+###### Set up cluster 2 #########################################
+#################################################################
+
+- name: Converge
+  hosts: master-2
+  gather_facts: true
+  tasks:
+    - name: "Include global tasks"
+      include_role:
+        name: "k8s"  
+    - name: Load variable file
+      include_vars:
+        dir: ../../vars
+    - name: "Create keyfactor-secret file {{ item }} namespace"
+      command: "{{ item }}"
+      register: kubectl
+      changed_when: false
+      loop:
+        - kubectl apply -f /vagrant/k8s/templates/keyfactor-secret-config-file-run.yaml -n foo
+        - kubectl apply -f /vagrant/k8s/templates/keyfactor-secret-config-file-run.yaml -n bar
+        - kubectl apply -f /vagrant/k8s/templates/keyfactor-secret-config-file-run.yaml -n legacy
+        - kubectl apply -f /vagrant/k8s/templates/keyfactor-secret-config-file-run.yaml -n istio-system
+    - name: Get cluster info 
+      command: kubectl cluster-info
+      register: kubectl
+      changed_when: false
+    - name: Create secret generic cacerts
+      command: kubectl create secret generic cacerts -n istio-system --from-file=/vagrant/istio/root-cert.pem
+      register: kubectl
+      changed_when: false
+    - name: Install istio single cluster with secret template 
+      command: /vagrant/istio/release/istioctl-linux-amd64 manifest --set installPackagePath=/vagrant/istio/installs apply -f /vagrant/k8s/templates/single-cluster-b-run.yaml
+      register: kubectl
+      changed_when: false
+    - name: Config auto inject label for namespace
+      command:  "{{ item }}"
+      register: kubectl
+      changed_when: false
+      loop:
+        - kubectl label namespace foo istio-injection=enabled 
+        - kubectl label namespace bar istio-injection=enabled 
+    - name: "Install httbin test service {{ item }}"
+      command:  "{{ item }}"
+      register: kubectl
+      changed_when: false
+      loop:
+        - kubectl apply -f /vagrant/k8s/templates/httpbin.yaml -n foo
+        - kubectl apply -f /vagrant/k8s/templates/httpbin.yaml -n bar
+        - kubectl apply -f /vagrant/k8s/templates/httpbin.yaml -n legacy
+    - name: "Install sleep test service {{ item }}"
+      command:  "{{ item }}"
+      register: kubectl
+      changed_when: false
+      loop:
+        - kubectl apply -f /vagrant/k8s/templates/sleep.yaml -n foo
+        - kubectl apply -f /vagrant/k8s/templates/sleep.yaml -n bar
+        - kubectl apply -f /vagrant/k8s/templates/sleep.yaml -n legacy
+    - name: Install mTLS policy
+      command:  kubectl apply -f /vagrant/k8s/templates/mtls-policy.yaml -n istio-system
+      register: kubectl
+      changed_when: false
+    - name: Get IstioCoreDNS cluster a IP
+      command: kubectl get svc -n istio-system istiocoredns -o jsonpath={.spec.clusterIP}
+      register: kubectl
+      changed_when: false  
+    - name: Update DNS config DNS cluster IP
+      command: "sed -i s#__DNS__CLUSTER__IP__#{{ kubectl.stdout }}# /vagrant/k8s/templates/dns-b-run.yaml"
+      register: kubectl
+      changed_when: false
+      args:
+        warn: false
+    - name: Get IstioIngressGateway Nodeport
+      command: kubectl get svc -n istio-system istio-ingressgateway -o=jsonpath='{.spec.ports[?(@.port==15443)].nodePort}'
+      register: kubectl
+      changed_when: false  
+    - name: Update svc port in service entry config
+      command: "sed -i s#__MTLS__PORT__#{{ kubectl.stdout }}# /vagrant/k8s/templates/serviceentry-cluster-a-run.yaml"
+      register: kubectl
+      changed_when: false
+      args:
+        warn: false
+    - name: Configure DNS in coreDNS
+      command:  kubectl apply -f /vagrant/k8s/templates/dns-b-run.yaml
+      register: kubectl
+      changed_when: false
+
+###################################################################
+########## Configure Service Entries DNS ##########################
+###################################################################
+- name: Converge
+  hosts: master-2
+  gather_facts: true
+  tasks:
+    - name: Configure service entry in coreDNS
+      command:  "{{ item }}"
+      register: kubectl
+      changed_when: false
+      loop:
+        - kubectl apply -f /vagrant/k8s/templates/serviceentry-cluster-b-run.yaml -n foo
+        - kubectl apply -f /vagrant/k8s/templates/serviceentry-cluster-b-run.yaml -n bar
+        - kubectl apply -f /vagrant/k8s/templates/serviceentry-cluster-b-run.yaml -n legacy
+        - kubectl apply -f /vagrant/k8s/templates/serviceentry-cluster-b-run.yaml  
+
+- name: Converge
+  hosts: master-1
+  gather_facts: true
+  tasks:
+    - name: Configure service entry in coreDNS
+      command:  "{{ item }}"
+      register: kubectl
+      changed_when: false
+      loop:
+        - kubectl apply -f /vagrant/k8s/templates/serviceentry-cluster-a-run.yaml -n foo
+        - kubectl apply -f /vagrant/k8s/templates/serviceentry-cluster-a-run.yaml -n bar
+        - kubectl apply -f /vagrant/k8s/templates/serviceentry-cluster-a-run.yaml -n legacy
+        - kubectl apply -f /vagrant/k8s/templates/serviceentry-cluster-a-run.yaml  

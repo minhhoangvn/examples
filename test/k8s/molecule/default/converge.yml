@@ -13,22 +13,6 @@
       command: kubectl cluster-info
       register: kubectl
       changed_when: false
-    - name: "Create namespace {{ item }}"
-      command: "{{ item }}"
-      register: kubectl
-      changed_when: false
-      loop:
-        - kubectl create namespace foo
-        - kubectl create namespace bar
-        - kubectl create namespace legacy
-    - name: "Create secret object in {{ item }} namespace"
-      command: "{{ item }}"
-      register: kubectl
-      changed_when: false
-      loop:
-        - kubectl apply -f /vagrant/k8s/templates/keyfactor-secret-run.yaml -n foo 
-        - kubectl apply -f /vagrant/k8s/templates/keyfactor-secret-run.yaml -n bar
-        - kubectl apply -f /vagrant/k8s/templates/keyfactor-secret-run.yaml -n legacy
     - name: "Install httbin test service {{ item }}"
       command:  "{{ item }}"
       register: kubectl

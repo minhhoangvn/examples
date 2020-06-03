@@ -1,0 +1,31 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: delegated
+  options:
+    managed: false
+    ansible_connection_options:
+      ansible_connection: local
+platforms:
+  - name: k8s-cluster
+provisioner:
+  name: ansible
+  inventory:
+    links:
+      hosts: ../../inventory/hosts
+  playbooks:
+    prepare: prepare.yml
+    cleanup: cleanup.yml
+verifier:
+  enabled: True
+  name: testinfra
+  options:
+    s: true
+  additional_files_or_dirs:
+    - ../../../resources/tests/*.py
+scenario:
+  test_sequence:
+    - converge
+    - verify
+    - cleanup

@@ -11,39 +11,19 @@ spec:
       enabled: true  
   values:
     global:
-      hub: "thedemoland"
-      tag: "khoahoang"
+      hub: "thedemodrive"
+      tag: "final-02"
       imagePullPolicy: "Always"
       multiCluster:
         enabled: true
         clusterName: __CLUSTER__NAME__
+      podDNSSearchNamespaces:
+        - global
       controlPlaneSecurityEnabled: true
       caProvider: "KeyfactorCA"
       caAddress: "__CA__ADDR__"
       # Configure the external CA Provider by Keyfactor.
       keyfactor: 
-        # Empty for using yaml global config
-        # Each namespace must have one secret (pod only ready secret within namespace)
-        secretName: "istio-keyfactor-secret"
-        #secretName: ""
-        # # Name of certificate authorization
-        # caName: "Keyfactor.thedemodrive.com\\Keyfactor Demo Drive CA 1"
-        # # Using for authentication header
-        # authToken: "Basic dGhlZGVtb2RyaXZlXGttc3RlY2g6R3JxVVdjdVZ4MkY1UlYqdA"
-        # # ApiKey from Api Setting
-        # appKey: "7vZGOED+WIw0aA=="
-        caTemplate: "Istio"
-        metadata:
-          - name: Cluster
-            alias: ClusterID 
-          - name: Service
-            alias: Service 
-          - name: PodName
-            alias: PodName 
-          - name: PodNamespace
-            alias: PodNamespace 
-          - name: PodIP
-            alias: PodIP 
-          - name: TrustDomain
-            alias: TrustDomain
+        secretName: "__SECRET_NAME__"
+        configPath: "__CONFIG__PATH__"
 
