@@ -30,11 +30,13 @@ $configureBox = <<-SCRIPT
     echo "====================================================================="
     echo "====================================================================="
     apt-get update
-    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+    curl -k -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+	curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+	echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
     apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
     apt-get update
-    apt-get install -y docker.io openssh-server apt-transport-https ca-certificates curl software-properties-common jq kubelet kubeadm kubectl kubernetes-cni ssh sshpass > /dev/null 2>&1 
-    usermod -aG docker vagrant
+    apt-get install -y unzip docker.io openssh-server apt-transport-https ca-certificates curl software-properties-common jq kubelet kubeadm kubectl kubernetes-cni ssh sshpass helm > /dev/null 2>&1 
+	usermod -aG docker vagrant
     # kubelet requires swap off
     swapoff -a
     # keep swap off after reboot
@@ -69,6 +71,9 @@ EOF
     sudo sed -i "s/^[#]*PasswordAuthentication[[:space:]]yes/PasswordAuthentication yes/" /etc/ssh/sshd_config
     sudo service sshd restart
     echo "sudo swapoff -a" >>  ~/.bashrc
+	mkdir -p /home/keyfactor 
+	wget --no-check-certificate -O /home/keyfactor/istio.zip https://github.com/thedemodrive/keyfactor-istio/releases/download/v2.alpha.1/v2alpha1.zip
+	unzip /home/keyfactor/istio.zip  -d /home/keyfactor/istio
     echo "========================= End Configure Box ========================="
     echo "====================================================================="
     echo "====================================================================="
@@ -206,6 +211,6 @@ Vagrant.configure("2") do |config|
     config.trigger.after :up do |trigger|
         trigger.name = "Execute Test"
         trigger.only_on = last_vm 
-        trigger.run = {inline: $runMoleculeTest}
+        #trigger.run = {inline: $runMoleculeTest}
     end
 end 
