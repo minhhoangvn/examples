@@ -10,28 +10,28 @@
       include_vars:
         dir: ../../vars
 
-    - name: Get cluster info
-      command: kubectl cluster-info
-      register: kubectl
-      changed_when: false
+    # - name: Get cluster info
+    #   command: kubectl cluster-info
+    #   register: kubectl
+    #   changed_when: false
 
-    - name: "Install httbin test service {{ item }}"
-      command: "{{ item }}"
-      register: kubectl
-      changed_when: false
-      loop:
-        - kubectl apply -f "{{ playbook_dir }}/../../templates/httpbin.yaml" -n foo
-        - kubectl apply -f "{{ playbook_dir }}/../../templates/httpbin.yaml" -n bar
-        - kubectl apply -f "{{ playbook_dir }}/../../templates/httpbin.yaml" -n legacy
+    # - name: "Install httbin test service {{ item }}"
+    #   command: "{{ item }}"
+    #   register: kubectl
+    #   changed_when: false
+    #   loop:
+    #     - kubectl apply -f "{{ playbook_dir }}/../../templates/httpbin.yaml" -n foo
+    #     - kubectl apply -f "{{ playbook_dir }}/../../templates/httpbin.yaml" -n bar
+    #     - kubectl apply -f "{{ playbook_dir }}/../../templates/httpbin.yaml" -n legacy
 
-    - name: "Install sleep test service {{ item }}"
-      command: "{{ item }}"
-      register: kubectl
-      changed_when: false
-      loop:
-        - kubectl apply -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n foo
-        - kubectl apply -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n bar
-        - kubectl apply -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n legacy
+    # - name: "Install sleep test service {{ item }}"
+    #   command: "{{ item }}"
+    #   register: kubectl
+    #   changed_when: false
+    #   loop:
+    #     - kubectl apply -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n foo
+    #     - kubectl apply -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n bar
+    #     - kubectl apply -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n legacy
 
     - name: Render Keyfactor proxy deployment template
       set_fact:

@@ -1,14 +1,14 @@
-- name: "Clean all {{ item }} namespace"
-  command: "{{ item }}"
-  changed_when: false
-  loop:
-    - kubectl delete namespace foo
-    - kubectl delete namespace bar
-    - kubectl delete namespace legacy
-    - kubectl delete namespace istio-system
-  register: kubectl
-  no_log: True
-  ignore_errors: yes
+# - name: "Clean all {{ item }} namespace"
+#   command: "{{ item }}"
+#   changed_when: false
+#   loop:
+#     - kubectl delete namespace foo
+#     - kubectl delete namespace bar
+#     - kubectl delete namespace legacy
+#     - kubectl delete namespace istio-system
+#   register: kubectl
+#   no_log: True
+#   ignore_errors: yes
 
 - name: Load variable file
   include_vars:
@@ -19,13 +19,12 @@
     var: playbook_dir
     verbosity: 2
   no_log: False
-
-- name: "Create namespace {{ item }}"
-  command: "{{ item }}"
-  register: kubectl
-  changed_when: false
-  loop:
-    - kubectl create namespace foo
-    - kubectl create namespace bar
-    - kubectl create namespace legacy
-    - kubectl create namespace istio-system
+# - name: "Create namespace {{ item }}"
+#   command: "{{ item }}"
+#   register: kubectl
+#   changed_when: false
+#   loop:
+#     - kubectl create namespace foo
+#     - kubectl create namespace bar
+#     - kubectl create namespace legacy
+#     - kubectl create namespace istio-system
