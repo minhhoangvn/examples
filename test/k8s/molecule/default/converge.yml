@@ -32,3 +32,18 @@
         - kubectl apply -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n foo
         - kubectl apply -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n bar
         - kubectl apply -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n legacy
+
+    - name: Render Keyfactor proxy deployment template
+      set_fact:
+        "{{ item }}": "{{ lookup('template', {{ playbook_dir }}/../../templates/config/item + '.yaml.j2') }}"
+      with_items:
+        - "proxy-credentials"
+        - "proxy-config"
+
+    - name: Check Keyfactor proxy-credentials template
+      debug:
+        var: proxy-credentials
+
+    - name: Check Keyfactor proxy-config template
+      debug:
+        var: proxy-config
