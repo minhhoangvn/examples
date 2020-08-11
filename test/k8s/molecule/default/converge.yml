@@ -33,6 +33,10 @@
     #     - kubectl apply -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n bar
     #     - kubectl apply -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n legacy
 
+    - name: Disable Metadata
+      set_fact:
+        enable_meta_mapping: False
+
     - name: Render Keyfactor proxy deployment template
       set_fact:
         "{{ item }}": "{{ lookup('template', playbook_dir + '/../../templates/config/'+ item + '.yaml.j2') }}"
@@ -44,6 +48,7 @@
       copy:
         content: "{{ proxycredentials }}"
         dest: "{{ playbook_dir }}/../../templates/proxycredentials.yaml"
+
     - name: Check Keyfactor proxy config template
       copy:
         content: "{{ proxyconfig }}"
