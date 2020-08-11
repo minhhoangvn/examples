@@ -41,9 +41,10 @@
         - "proxyconfig"
 
     - name: Check Keyfactor proxy credentials template
-      debug:
-        var: proxycredentials
-
+      copy:
+        content: "{{ proxycredentials }}"
+        dest: "{{ playbook_dir }}/../../templates/proxycredentials.yaml"
     - name: Check Keyfactor proxy config template
-      debug:
-        var: proxyconfig
+      copy:
+        content: "{{ proxyconfig }}"
+        dest: "{{ playbook_dir }}/../../templates/proxyconfig.yaml"
