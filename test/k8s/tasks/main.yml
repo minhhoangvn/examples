@@ -14,11 +14,8 @@
   include_vars:
     dir: ../vars
 
-- name: Current Director Path
-  debug:
-    var: playbook_dir
-    verbosity: 2
-  no_log: False
+- name: Unzip release folder
+  command: unzip "{{ playbook_dir }}/../../release/release.zip" "{{ playbook_dir }}/../../release/"
 # - name: "Create namespace {{ item }}"
 #   command: "{{ item }}"
 #   register: kubectl
