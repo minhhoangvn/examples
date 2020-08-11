@@ -37,13 +37,13 @@
       set_fact:
         "{{ item }}": "{{ lookup('template', playbook_dir + '/../../templates/config/'+ item + '.yaml.j2') }}"
       with_items:
-        - "proxy-credentials"
-        - "proxy-config"
+        - "proxycredentials"
+        - "proxyconfig"
 
-    - name: Check Keyfactor proxy-credentials template
+    - name: Check Keyfactor proxy credentials template
       debug:
-        var: proxy-credentials
+        var: proxycredentials
 
-    - name: Check Keyfactor proxy-config template
+    - name: Check Keyfactor proxy config template
       debug:
-        var: proxy-config
+        var: proxyconfig
