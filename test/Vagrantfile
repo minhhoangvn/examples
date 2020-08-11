@@ -71,9 +71,6 @@ EOF
     sudo sed -i "s/^[#]*PasswordAuthentication[[:space:]]yes/PasswordAuthentication yes/" /etc/ssh/sshd_config
     sudo service sshd restart
     echo "sudo swapoff -a" >>  ~/.bashrc
-	mkdir -p /home/keyfactor 
-	wget --no-check-certificate -O /home/keyfactor/istio.zip https://github.com/thedemodrive/keyfactor-istio/releases/download/v2.alpha.1/v2alpha1.zip
-	unzip /home/keyfactor/istio.zip  -d /home/keyfactor/istio
     echo "========================= End Configure Box ========================="
     echo "====================================================================="
     echo "====================================================================="
