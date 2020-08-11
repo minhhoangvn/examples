@@ -14,6 +14,11 @@
   include_vars:
     dir: ../vars
 
+- name: Current Director Path
+  debug:
+    var: playbook_dir
+    verbosity: 4
+
 - name: "Create namespace {{ item }}"
   command: "{{ item }}"
   register: kubectl
