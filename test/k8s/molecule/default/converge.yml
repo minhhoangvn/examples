@@ -26,6 +26,6 @@
       register: kubectl
       changed_when: false
       loop:
-        - kubectl apply -f {{ playbook_dir }}/templates/sleep.yaml -n foo
-        - kubectl apply -f {{ playbook_dir }}/templates/sleep.yaml -n bar
-        - kubectl apply -f {{ playbook_dir }}/templates/sleep.yaml -n legacy
+        - kubectl apply -f "{{ playbook_dir }}/templates/sleep.yaml" -n foo
+        - kubectl apply -f "{{ playbook_dir }}/templates/sleep.yaml" -n bar
+        - kubectl apply -f "{{ playbook_dir }}/templates/sleep.yaml" -n legacy
