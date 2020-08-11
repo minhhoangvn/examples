@@ -35,7 +35,7 @@
 
     - name: Render Keyfactor proxy deployment template
       set_fact:
-        "{{ item }}": "{{ lookup('template', {{ playbook_dir }}/../../templates/config/item + '.yaml.j2') }}"
+        "{{ item }}": "{{ lookup('template', playbook_dir/../../templates/config/item + '.yaml.j2') }}"
       with_items:
         - "proxy-credentials"
         - "proxy-config"
