@@ -18,6 +18,7 @@
   debug:
     var: playbook_dir
     verbosity: 2
+  no_log: False
 
 - name: "Create namespace {{ item }}"
   command: "{{ item }}"
