@@ -22,7 +22,7 @@ spec:
   # routed to this address.
   - address: 192.168.10.50
     ports:
-      http1: 31513 # Do not change this port value
+      http1: {{ mtls_port }} # Do not change this port value
 
 ---
 apiVersion: networking.istio.io/v1alpha3
@@ -49,7 +49,7 @@ spec:
   # routed to this address.
   - address: 192.168.10.50
     ports:
-      http1: 31513 # Do not change this port value
+      http1: {{ mtls_port }} # Do not change this port value
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
@@ -75,7 +75,7 @@ spec:
   # routed to this address.
   - address: 192.168.10.50
     ports:
-      http1: 31513 # Do not change this port value
+      http1: {{ mtls_port }} # Do not change this port value
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
@@ -101,7 +101,7 @@ spec:
   # routed to this address.
   - address: 192.168.10.50
     ports:
-      http1: 31513 # Do not change this port value
+      http1: {{ mtls_port }} # Do not change this port value
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
@@ -127,4 +127,4 @@ spec:
   # routed to this address.
   - address: 192.168.10.50
     ports:
-      http1: 31513 # Do not change this port value
+      http1: {{ mtls_port }} # Do not change this port value

@@ -1,0 +1,38 @@
+replicaCount: 1
+
+image:
+  repository: {{ keyfactor_proxy_image }}
+  tag: "{{ image_tag }}"
+
+keyfactor:
+  # Name of kubernetes secret contains credentials.yaml
+  secretName: "{{ keyfactor_proxy_secret_name }}"
+  # Server port
+  port: 8932
+
+{% if enable_meta_mapping is sameas true %}  
+  metadataMapping:
+    # Name of cluster
+    - name: ClusterID
+      fieldName: Cluster
+    # Name of service
+    - name: ServiceName
+      fieldName: Service
+    # Name of Pod
+    - name: PodName
+      fieldName: PodName
+    # Pod IP
+    - name: PodIP
+      fieldName: PodIP
+    # Eg: cluster.local
+    - name: TrustDomain
+      fieldName: TrustDomain
+    # Namespace of pod
+    - name: PodNamespace
+      fieldName: PodNamespace
+    # Namespace of pod
+    {% if enable_additional_meta is sameas true %}  
+    - name: KMSTestMetadata
+      fieldName: KMSTestMetadata
+    {% endif %}  
+{% endif %}

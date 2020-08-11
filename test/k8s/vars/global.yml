@@ -1,7 +1,15 @@
 ---
 # vars file for k8s
-caName: 'Keyfactor.thedemodrive.com\\Keyfactor Demo Drive CA 1'
-authToken: 'Basic dGhlZGVtb2RyaXZlXGttc3RlY2g6R3JxVVdjdVZ4MkY1UlYqdA'
-caTemplate: 'Istio'
-appKey: '7vZGOED+WIw0aA=='
-caAddress: 'https://kmstech.thedemodrive.com'
+keyfactor_proxy_image: "thedemodrive/keyfactor-proxy"
+image_tag: "latest"
+keyfactor_proxy_secret_name: "keyfactor-secret"
+keyfactor_url: "https://kmstech.thedemodrive.com/"
+ca_name: 'Keyfactor.thedemodrive.com\\Keyfactor Demo Drive CA 1'
+auth_token: "Basic dGhlZGVtb2RyaXZlXGttc3RlY2g6R3JxVVdjdVZ4MkY1UlYqdA"
+enroll_path: "KeyfactorAPI/Enrollment/CSR"
+ca_template: "Istio"
+app_key: "7vZGOED+WIw0aA=="
+enable_meta_mapping: true
+enable_additional_meta: true
+keyfactor_proxy_api_version: "v2.alpha.2"
+istio_profile: demo

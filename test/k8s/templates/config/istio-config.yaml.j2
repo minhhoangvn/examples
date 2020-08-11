@@ -1,0 +1,17 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  namespace: istio-system
+spec:
+  hub: thedemodrive
+  tag: {{ keyfactor_proxy_api_version }}
+  installPackagePath: "charts"
+  profile: "{{ istio_profile }}"
+  components:
+    pilot:
+      enabled: true
+      k8s:
+        env:
+          - name: CUSTOM_CA_ADDR
+            # The address of Keyfactor-Proxy
+            value: "{{ ca_addr }}"

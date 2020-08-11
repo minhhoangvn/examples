@@ -5,7 +5,7 @@ metadata:
   namespace: kube-system
 data:
   stubDomains: |
-    {"global": ["__DNS__CLUSTER__IP__"]}
+    {"global": ["{{ dns_cluster_ip }}"]}
 
 ---
 
@@ -35,5 +35,5 @@ data:
     global:53 {
         errors
         cache 30
-        forward . __DNS__CLUSTER__IP__:53
+        forward . {{ dns_cluster_ip }}:53
     }

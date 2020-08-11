@@ -15,14 +15,14 @@ spec:
     protocol: http
   resolution: DNS
   addresses:
-  - 240.0.0.5
+  - 240.0.0.2
   endpoints:
   # This is the routable address of the ingress gateway in cluster2 that
   # sits in front of sleep.foo service. Traffic from the sidecar will be
   # routed to this address.
-  - address: 192.168.10.50
+  - address: 192.168.10.51
     ports:
-      http1: __MTLS__PORT__ # Do not change this port value
+      http1: {{ mtls_port }} # Do not change this port value
 
 ---
 apiVersion: networking.istio.io/v1alpha3
@@ -42,14 +42,14 @@ spec:
     protocol: http
   resolution: DNS
   addresses:
-  - 240.0.0.6
+  - 240.0.0.3
   endpoints:
   # This is the routable address of the ingress gateway in cluster2 that
   # sits in front of sleep.foo service. Traffic from the sidecar will be
   # routed to this address.
-  - address: 192.168.10.50
+  - address: 192.168.10.51
     ports:
-      http1: __MTLS__PORT__ # Do not change this port value
+      http1: {{ mtls_port }} # Do not change this port value
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
@@ -68,14 +68,14 @@ spec:
     protocol: http
   resolution: DNS
   addresses:
-  - 240.0.0.7
+  - 240.0.0.4
   endpoints:
   # This is the routable address of the ingress gateway in cluster2 that
   # sits in front of sleep.foo service. Traffic from the sidecar will be
   # routed to this address.
-  - address: 192.168.10.50
+  - address: 192.168.10.51
     ports:
-      http1: __MTLS__PORT__ # Do not change this port value
+      http1: {{ mtls_port }} # Do not change this port value
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
@@ -94,14 +94,14 @@ spec:
     protocol: http
   resolution: DNS
   addresses:
-  - 240.0.0.8
+  - 240.0.0.9
   endpoints:
   # This is the routable address of the ingress gateway in cluster2 that
   # sits in front of sleep.foo service. Traffic from the sidecar will be
   # routed to this address.
-  - address: 192.168.10.50
+  - address: 192.168.10.51
     ports:
-      http1: __MTLS__PORT__ # Do not change this port value
+      http1: {{ mtls_port }} # Do not change this port value
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
@@ -120,11 +120,11 @@ spec:
     protocol: http
   resolution: DNS
   addresses:
-  - 240.0.0.12
+  - 240.0.0.9
   endpoints:
   # This is the routable address of the ingress gateway in cluster2 that
   # sits in front of sleep.foo service. Traffic from the sidecar will be
   # routed to this address.
-  - address: 192.168.10.50
+  - address: 192.168.10.51
     ports:
-      http1: __MTLS__PORT__ # Do not change this port value
+      http1: {{ mtls_port }} # Do not change this port value
