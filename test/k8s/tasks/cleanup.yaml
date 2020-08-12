@@ -6,6 +6,7 @@
     - foo
     - bar
     - legacy
+
 - name: "Delete sleep test service {{ item }}"
   command:  'kubectl delete -f "{{ playbook_dir }}/../../templates/sleep.yaml" {{ item }}'
   register: kubectl
@@ -14,10 +15,12 @@
     - foo
     - bar
     - legacy
+
 - name: Clean mTLS policy
   command:  kubectl delete -f /vagrant/k8s/templates/mtls-policy.yaml -n istio-system
   register: kubectl
   changed_when: false
+
 - name: "Delete all deployment {{ item }} namespace"
   command: "kubectl delete deployment --all -n {{ item }}"
   register: kubectl
@@ -26,6 +29,7 @@
     - foo
     - bar
     - legacy   
+
 - name: "Delete all secret {{ item }} namespace"
   command: "kubectl delete secret --all -n {{ item }}"
   register: kubectl
@@ -34,6 +38,7 @@
     - foo
     - bar
     - legacy 
+
 - name: "Delete all configmap {{ item }} namespace"
   command: "kubectl delete configmap --all -n {{ item }}"
   register: kubectl
@@ -42,13 +47,15 @@
     - foo
     - bar
     - legacy
+
 - name: "Delete all svc {{ item }} namespace"
   command: "kubectl delete svc --all -n {{ item }}"
   changed_when: false
   loop:
     - foo
     - bar
-    - legacy   
+    - legacy  
+
 - name: "Delete all serviceentries {{ item }} namespace"
   command: " kubectl delete serviceentries --all -n {{ item }}"
   changed_when: false
@@ -56,6 +63,7 @@
     - foo
     - bar
     - legacy 
+    
 - name: "Delete {{ item }} namespace"
   command: "kubectl delete namespace {{ item }}"
   changed_when: false

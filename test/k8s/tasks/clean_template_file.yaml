@@ -7,3 +7,22 @@
         - credentials
         - istio-config
   changed_when: false
+
+- name: "Clean runtime certs files"
+  file:
+    path: "{{ playbook_dir }}/../../templates/certs/{{ item }}"
+    state: absent
+  with_items:
+        - custom-ca.crt
+        - custom-ca.key
+        - root-cert.pem
+  changed_when: false
+
+- name: "Clean istio installation files"
+  file:
+    path: "{{ playbook_dir }}/../../release/{{ item }}"
+    state: absent
+  with_items:
+        - charts
+        - istioctl-linux-amd64
+  changed_when: false
