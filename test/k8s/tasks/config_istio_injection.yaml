@@ -1,0 +1,7 @@
+- name: "Config auto inject label for namespace {{ item }}"
+  command:  "kubectl label namespace {{ item }} istio-injection=enabled "
+  register: kubectl
+  changed_when: false
+  loop:
+    - foo
+    - bar
