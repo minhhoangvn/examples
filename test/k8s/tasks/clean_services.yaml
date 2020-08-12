@@ -72,10 +72,6 @@
     - bar
     - legacy 
 
-- name: test
-  set_fact:
-    keyfactor_namespace: "abc"
-    
 - name: "Delete {{ item }} namespace"
   command: "kubectl delete namespace {{ item }}"
   changed_when: false
