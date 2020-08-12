@@ -14,4 +14,4 @@ spec:
         env:
           - name: CUSTOM_CA_ADDR
             # The address of Keyfactor-Proxy
-            value: "{{ ca_addr }}"
+            value: "{{ keyfactor_chart_name }}-keyfactor-k8s.abc.svc.cluster.local:8932"
