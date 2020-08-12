@@ -43,15 +43,15 @@
     - name: Check Keyfactor proxy credentials template
       copy:
         content: "{{ proxycredentials }}"
-        dest: "{{ playbook_dir }}/../../templates/proxycredentials.yaml"
+        dest: "{{ playbook_dir }}/../../templates/credentials.yaml"
 
     - name: Check Keyfactor proxy config template
       copy:
         content: "{{ proxyconfig }}"
-        dest: "{{ playbook_dir }}/../../templates/proxyconfig.yaml"
+        dest: "{{ playbook_dir }}/../../templates/config.yaml"
 
     - name: Create Keyfactor proxy credentials secret
-      command: kubectl create secret generic keyfactor-secret -n keyfactor --from-file="{{ playbook_dir }}/../../templates/proxycredentials.yaml"
+      command: 'kubectl create secret generic {{ keyfactor_proxy_secret_name }} -n keyfactor --from-file="{{ playbook_dir }}/../../templates/credentials.yaml"'
 
     - name: Install Keyfactor proxy server through Helm
-      command: helm install k -n keyfactor --values "{{ playbook_dir }}/../../templates/proxyconfig.yaml" "{{ playbook_dir }}/../../templates/chart/keyfactor-k8s-0.1.0.tgz"
+      command: 'helm install k -n keyfactor --values "{{ playbook_dir }}/../../templates/proxyconfig.yaml" "{{ playbook_dir }}/../../templates/chart/keyfactor-k8s-0.1.0.tgz"'
