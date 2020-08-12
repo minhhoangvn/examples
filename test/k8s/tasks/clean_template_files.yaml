@@ -24,3 +24,4 @@
         - charts
         - istioctl-linux-amd64
   changed_when: false
+  warn: false
