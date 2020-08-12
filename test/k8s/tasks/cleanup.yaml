@@ -1,69 +1,66 @@
 - name: "Delete httbin test service {{ item }}"
-  command:  "{{ item }}"
+  command:  'kubectl delete -f "{{ playbook_dir }}/../../templates/httpbin.yaml" {{ item }}'
   register: kubectl
   changed_when: false
   loop:
-    - kubectl delete -f /vagrant/k8s/templates/httpbin.yaml -n foo
-    - kubectl delete -f /vagrant/k8s/templates/httpbin.yaml -n bar
-    - kubectl delete -f /vagrant/k8s/templates/httpbin.yaml -n legacy
+    - foo
+    - bar
+    - legacy
 - name: "Delete sleep test service {{ item }}"
-  command:  "{{ item }}"
+  command:  'kubectl delete -f "{{ playbook_dir }}/../../templates/sleep.yaml" {{ item }}'
   register: kubectl
   changed_when: false
   loop:
-    - kubectl delete -f /vagrant/k8s/templates/sleep.yaml -n foo
-    - kubectl delete -f /vagrant/k8s/templates/sleep.yaml -n bar
-    - kubectl delete -f /vagrant/k8s/templates/sleep.yaml -n legacy
+    - foo
+    - bar
+    - legacy
 - name: Clean mTLS policy
   command:  kubectl delete -f /vagrant/k8s/templates/mtls-policy.yaml -n istio-system
   register: kubectl
   changed_when: false
 - name: "Delete all deployment {{ item }} namespace"
-  command: "{{ item }}"
+  command: "kubectl delete deployment --all -n {{ item }}"
   register: kubectl
   changed_when: false
   loop:
-    - kubectl delete deployment --all -n foo
-    - kubectl delete deployment --all -n bar
-    - kubectl delete deployment --all -n legacy   
+    - foo
+    - bar
+    - legacy   
 - name: "Delete all secret {{ item }} namespace"
-  command: "{{ item }}"
+  command: "kubectl delete secret --all -n {{ item }}"
   register: kubectl
   changed_when: false
   loop:
-    - kubectl delete secret --all -n foo
-    - kubectl delete secret --all -n bar
-    - kubectl delete secret --all -n legacy 
+    - foo
+    - bar
+    - legacy 
 - name: "Delete all configmap {{ item }} namespace"
-  command: "{{ item }}"
+  command: "kubectl delete configmap --all -n {{ item }}"
   register: kubectl
   changed_when: false
   loop:
-    - kubectl delete configmap --all -n foo
-    - kubectl delete configmap --all -n bar
-    - kubectl delete configmap --all -n legacy
+    - foo
+    - bar
+    - legacy
 - name: "Delete all svc {{ item }} namespace"
-  command: "{{ item }}"
-  register: kubectl
+  command: "kubectl delete svc --all -n {{ item }}"
   changed_when: false
   loop:
-    - kubectl delete svc --all -n foo
-    - kubectl delete svc --all -n bar
-    - kubectl delete svc --all -n legacy   
+    - foo
+    - bar
+    - legacy   
 - name: "Delete all serviceentries {{ item }} namespace"
-  command: "{{ item }}"
-  register: kubectl
+  command: " kubectl delete serviceentries --all -n {{ item }}"
   changed_when: false
   loop:
-    - kubectl delete serviceentries --all -n foo
-    - kubectl delete serviceentries --all -n bar
-    - kubectl delete serviceentries --all -n legacy 
+    - foo
+    - bar
+    - legacy 
 - name: "Delete {{ item }} namespace"
-  command: "{{ item }}"
-  register: kubectl
+  command: "kubectl delete namespace {{ item }}"
   changed_when: false
   loop:
-    - kubectl delete namespace foo
-    - kubectl delete namespace bar
-    - kubectl delete namespace legacy
-    - kubectl delete namespace istio-system
+    - foo
+    - bar
+    - legacy
+    - istio-system
