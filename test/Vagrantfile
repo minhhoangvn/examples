@@ -144,7 +144,7 @@ EOF
     apt-get install -y python3.6 python3-pip libssl-dev > /dev/null 2>&1
     python3.6 -m pip install --upgrade --user setuptools
     python3.6 -m pip install --upgrade pip
-    python3.6 -m pip install virtualenv molecule ansible kubernetes-py testinfra kubernetes
+    python3.6 -m pip install virtualenv molecule ansible kubernetes-py testinfra kubernetes jmespath
     molecule --help
     echo "====================== End Install Molecule Packages ================"
     echo "====================================================================="
