@@ -5,7 +5,7 @@ image_tag: "latest"
 keyfactor_proxy_secret_name: "keyfactor-secret"
 keyfactor_url: "https://kmstech.thedemodrive.com/"
 ca_name: 'Keyfactor.thedemodrive.com\\Keyfactor Demo Drive CA 1'
-auth_token: "Basic dGhlZGVtb2RyaXZlXGttc3RlY2g6R3JxVVdjdVZ4MkY1UlYqdA"
+auth_token: "dGhlZGVtb2RyaXZlXGttc3RlY2g6R3JxVVdjdVZ4MkY1UlYqdA"
 enroll_path: "KeyfactorAPI/Enrollment/CSR"
 ca_template: "Istio"
 app_key: "7vZGOED+WIw0aA=="
