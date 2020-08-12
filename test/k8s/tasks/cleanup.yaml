@@ -1,5 +1,5 @@
 - name: "Delete httbin test service {{ item }}"
-  command:  'kubectl delete -f "{{ playbook_dir }}/../../templates/httpbin.yaml" {{ item }}'
+  command:  'kubectl delete -f "{{ playbook_dir }}/../../templates/httpbin.yaml" -n {{ item }}'
   register: kubectl
   changed_when: false
   loop:
@@ -8,7 +8,7 @@
     - legacy
 
 - name: "Delete sleep test service {{ item }}"
-  command:  'kubectl delete -f "{{ playbook_dir }}/../../templates/sleep.yaml" {{ item }}'
+  command:  'kubectl delete -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n {{ item }}'
   register: kubectl
   changed_when: false
   loop:
@@ -17,7 +17,7 @@
     - legacy
 
 - name: Clean mTLS policy
-  command:  kubectl delete -f /vagrant/k8s/templates/mtls-policy.yaml -n istio-system
+  command:  'kubectl delete -f "{{ playbook_dir }}/../../templates/mtls-policy.yaml" -n istio-system'
   register: kubectl
   changed_when: false
 
@@ -63,7 +63,7 @@
     - foo
     - bar
     - legacy 
-    
+
 - name: "Delete {{ item }} namespace"
   command: "kubectl delete namespace {{ item }}"
   changed_when: false

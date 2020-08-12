@@ -67,3 +67,4 @@ def wait_for_pod_ready(namespace: str = "default", pod_name: str = ""):
         pod_ready = current_status == ready_status
         total_waiting_time = (datetime.now() - start_time).total_seconds()
         time.sleep(2)
+    time.sleep(5)
