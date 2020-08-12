@@ -1,14 +1,16 @@
-# - name: "Clean all {{ item }} namespace"
-#   command: "{{ item }}"
-#   changed_when: false
-#   loop:
-#     - kubectl delete namespace foo
-#     - kubectl delete namespace bar
-#     - kubectl delete namespace legacy
-#     - kubectl delete namespace istio-system
-#   register: kubectl
-#   no_log: True
-#   ignore_errors: yes
+- name: "Clean all {{ item }} namespace"
+  command: "kubectl delete namespace  {{ item }}"
+  changed_when: false
+  loop:
+    - foo
+    - bar
+    - legacy
+    - istio-system
+    - keyfactor
+
+  register: kubectl
+  no_log: True
+  ignore_errors: yes
 
 - name: Load variable file
   include_vars:
@@ -18,13 +20,14 @@
   unarchive:
     src: "{{ playbook_dir }}/../../release/release.zip"
     dest: "{{ playbook_dir }}/../../release"
-  # command: unzip "{{ playbook_dir }}/../../release/release.zip" -d "{{ playbook_dir }}/../../release/"
-# - name: "Create namespace {{ item }}"
-#   command: "{{ item }}"
-#   register: kubectl
-#   changed_when: false
-#   loop:
-#     - kubectl create namespace foo
-#     - kubectl create namespace bar
-#     - kubectl create namespace legacy
-#     - kubectl create namespace istio-system
+
+- name: "Create namespace {{ item }}"
+  command: "kubectl create namespace {{ item }}"
+  register: kubectl
+  changed_when: false
+  loop:
+    - foo
+    - bar
+    - legacy
+    - istio-system
+    - keyfactor
