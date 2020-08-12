@@ -15,7 +15,10 @@
     dir: ../vars
 
 - name: Unzip release folder
-  command: unzip "{{ playbook_dir }}/../../release/release.zip" "{{ playbook_dir }}/../../release/"
+  unarchive:
+    src: "{{ playbook_dir }}/../../release/release.zip"
+    dest: "{{ playbook_dir }}/../../release"
+  # command: unzip "{{ playbook_dir }}/../../release/release.zip" -d "{{ playbook_dir }}/../../release/"
 # - name: "Create namespace {{ item }}"
 #   command: "{{ item }}"
 #   register: kubectl
