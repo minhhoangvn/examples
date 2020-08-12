@@ -2,6 +2,7 @@
   command:  'kubectl delete -f "{{ playbook_dir }}/../../templates/httpbin.yaml" -n {{ item }}'
   register: kubectl
   changed_when: false
+  ignore_errors: yes
   loop:
     - foo
     - bar
@@ -11,6 +12,7 @@
   command:  'kubectl delete -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n {{ item }}'
   register: kubectl
   changed_when: false
+  ignore_errors: yes
   loop:
     - foo
     - bar
@@ -20,11 +22,13 @@
   command:  'kubectl delete -f "{{ playbook_dir }}/../../templates/mtls-policy.yaml" -n istio-system'
   register: kubectl
   changed_when: false
+  ignore_errors: yes
 
 - name: "Delete all deployment {{ item }} namespace"
   command: "kubectl delete deployment --all -n {{ item }}"
   register: kubectl
   changed_when: false
+  ignore_errors: yes
   loop:
     - foo
     - bar
@@ -34,6 +38,7 @@
   command: "kubectl delete secret --all -n {{ item }}"
   register: kubectl
   changed_when: false
+  ignore_errors: yes
   loop:
     - foo
     - bar
@@ -43,6 +48,7 @@
   command: "kubectl delete configmap --all -n {{ item }}"
   register: kubectl
   changed_when: false
+  ignore_errors: yes
   loop:
     - foo
     - bar
@@ -51,6 +57,7 @@
 - name: "Delete all svc {{ item }} namespace"
   command: "kubectl delete svc --all -n {{ item }}"
   changed_when: false
+  ignore_errors: yes
   loop:
     - foo
     - bar
@@ -59,6 +66,7 @@
 - name: "Delete all serviceentries {{ item }} namespace"
   command: " kubectl delete serviceentries --all -n {{ item }}"
   changed_when: false
+  ignore_errors: yes
   loop:
     - foo
     - bar
@@ -67,6 +75,7 @@
 - name: "Delete {{ item }} namespace"
   command: "kubectl delete namespace {{ item }}"
   changed_when: false
+  ignore_errors: yes
   loop:
     - foo
     - bar
