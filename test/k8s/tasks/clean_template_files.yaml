@@ -20,9 +20,24 @@
 
 - name: "Clean istio installation files"
   file:
-    path: "{{ playbook_dir }}/../../release/{{ item }}"
+    path: "{{ playbook_dir }}/../../release/charts"
     state: absent
-  with_items:
-        - charts
-        - istioctl-linux-amd64
+  changed_when: false
+
+- name: "Wait istio installation files"
+  wait_for:
+    path: "{{ playbook_dir }}/../../release/charts"
+    state: absent
+  changed_when: false
+
+- name: "Clean istio installation bin files"
+  file:
+    path: "{{ playbook_dir }}/../../release/istioctl-linux-amd64"
+    state: absent
+  changed_when: false
+
+- name: "Wait istio installation bin files"
+  wait_for:
+    path: "{{ playbook_dir }}/../../release/istioctl-linux-amd64"
+    state: absent
   changed_when: false
