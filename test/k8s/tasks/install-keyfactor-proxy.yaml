@@ -1,0 +1,92 @@
+    - name: Render Keyfactor proxy deployment template
+      set_fact:
+        "{{ item }}": "{{ lookup('template', playbook_dir + '/../../templates/config/'+ item + '.yaml.j2') }}"
+      with_items:
+        - "proxycredentials"
+        - "proxyconfig"
+        - "istioconfig"
+
+    - name: Create Keyfactor proxy credentials template
+      copy:
+        content: "{{ proxycredentials }}"
+        dest: "{{ playbook_dir }}/../../templates/credentials.yaml"
+
+    - name: Create Keyfactor proxy config template
+      copy:
+        content: "{{ proxyconfig }}"
+        dest: "{{ playbook_dir }}/../../templates/proxy-config.yaml"
+
+    - name: Create Istio config template
+      copy:
+        content: "{{ istioconfig }}"
+        dest: "{{ playbook_dir }}/../../templates/istio-config.yaml"
+
+    - name: Create Keyfactor proxy credentials secret
+      command: 'kubectl create secret generic {{ keyfactor_proxy_secret_name }} -n keyfactor --from-file="{{ playbook_dir }}/../../templates/credentials.yaml"'
+      
+    - name: Install Keyfactor proxy server through Helm
+      command: 'helm install {{ keyfactor_chart_name }} -n {{ keyfactor_namespace }} --values "{{ playbook_dir }}/../../templates/proxy-config.yaml" "{{ playbook_dir }}/../../templates/chart/keyfactor-k8s-0.1.0.tgz"'
+      register: helmlog
+
+    - name: Helm log install Keyfactor proxy
+      debug:
+        var: helmlog
+
+    - name: Set Keyfactor proxy server POD_NAME
+      command: 'kubectl get pods --namespace {{ keyfactor_namespace }} -l "app.kubernetes.io/name=keyfactor-k8s" -o jsonpath="{.items[0].metadata.name}"'
+      register: POD_NAME
+
+    - name: Wait for Keyfactor proxy pod running
+      shell: "kubectl get pods -n {{ keyfactor_namespace }} -o json"
+      register: kubectl_get_pods
+      until: kubectl_get_pods.stdout|from_json|json_query('items[0].status.phase') == "Running"
+      retries: 20
+      delay: 5
+
+    - name: "Copy custom-ca.crt in Keyfactor proxy server {{ POD_NAME.stdout }}"
+      shell: 'kubectl cp {{ keyfactor_namespace }}/{{ POD_NAME.stdout }}:certs/client.crt "{{ playbook_dir }}/../../templates/certs/custom-ca.crt"'
+      no_log: False
+      register: kubectlcp
+      until: kubectlcp.stdout.find("No such file or directory") == -1
+      retries: 20
+      delay: 5
+
+    - name: Debug copy file logs
+      debug:
+        var: kubectlcp
+
+    - name: "Copy custom-ca.key in Keyfactor proxy server {{ POD_NAME.stdout }}"
+      command: 'kubectl cp {{ keyfactor_namespace }}/{{ POD_NAME.stdout }}:certs/client.key "{{ playbook_dir }}/../../templates/certs/custom-ca.key"'
+      no_log: False
+      register: kubectlcp
+      until: kubectlcp.stdout.find("No such file or directory") == -1
+      retries: 20
+      delay: 5
+
+    - name: Debug copy file logs
+      debug:
+        var: kubectlcp
+
+    - name: "Copy root-cert.pem in Keyfactor proxy server {{ POD_NAME.stdout }}"
+      command: 'kubectl cp {{ keyfactor_namespace }}/{{ POD_NAME.stdout }}:certs/root-cert.pem "{{ playbook_dir }}/../../templates/certs/root-cert.pem"'
+      no_log: False
+      register: kubectlcp
+      until: kubectlcp.stdout.find("No such file or directory") == -1
+      retries: 20
+      delay: 5
+
+    - name: Debug copy file logs
+      debug:
+        var: kubectlcp
+
+    - name: Create ca-cert generic secret IstioD
+      command: 'kubectl create secret generic cacerts -n istio-system --from-file "{{ playbook_dir }}/../../templates/certs/root-cert.pem" --from-file "{{ playbook_dir }}/../../templates/certs/custom-ca.crt" --from-file "{{ playbook_dir }}/../../templates/certs/custom-ca.key"'
+      no_log: False
+      register: kubectlcp
+
+    - name: Debug copy file logs
+      debug:
+        var: kubectlcp
+
+    - name: Install Istio to Kubernetes cluster
+      command: '"{{ playbook_dir }}/../../release/istioctl-linux-amd64" install -f "{{ playbook_dir }}/../../templates/istio-config.yaml" --charts="{{ playbook_dir }}/../../release/charts"'
