@@ -23,23 +23,23 @@
       register: kubectl
       changed_when: false
 
-    - name: "Install httbin test service {{ item }}"
-      command: 'kubectl apply -f "{{ playbook_dir }}/../../templates/httpbin.yaml" -n {{ item }}'
-      register: kubectl
-      changed_when: false
-      loop:
-        - foo
-        - bar
-        - legacy
+    # - name: "Install httbin test service {{ item }}"
+    #   command: 'kubectl apply -f "{{ playbook_dir }}/../../templates/httpbin.yaml" -n {{ item }}'
+    #   register: kubectl
+    #   changed_when: false
+    #   loop:
+    #     - foo
+    #     - bar
+    #     - legacy
 
-    - name: "Install sleep test service {{ item }}"
-      command: 'kubectl apply -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n {{ item }}'
-      register: kubectl
-      changed_when: false
-      loop:
-        - foo
-        - bar
-        - legacy
+    # - name: "Install sleep test service {{ item }}"
+    #   command: 'kubectl apply -f "{{ playbook_dir }}/../../templates/sleep.yaml" -n {{ item }}'
+    #   register: kubectl
+    #   changed_when: false
+    #   loop:
+    #     - foo
+    #     - bar
+    #     - legacy
 
     - name: Install Keyfactor proxy sever
       include_role:

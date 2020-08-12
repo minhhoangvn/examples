@@ -2,9 +2,9 @@
   command: "kubectl delete namespace  {{ item }}"
   changed_when: false
   loop:
-    - foo
-    - bar
-    - legacy
+    # - foo
+    # - bar
+    # - legacy
     - istio-system
     - keyfactor
 
@@ -26,8 +26,8 @@
   register: kubectl
   changed_when: false
   loop:
-    - foo
-    - bar
-    - legacy
+    # - foo
+    # - bar
+    # - legacy
     - istio-system
     - keyfactor
