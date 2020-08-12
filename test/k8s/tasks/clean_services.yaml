@@ -72,3 +72,4 @@
     - bar
     - legacy
     - istio-system
+    - "{{ keyfactor_namespace }}"
