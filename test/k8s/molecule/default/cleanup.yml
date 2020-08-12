@@ -3,88 +3,11 @@
   hosts: master-1
   gather_facts: true
   tasks:
-    - name: "Delete httbin test service {{ item }}"
-      command:  "{{ item }}"
-      register: kubectl
-      changed_when: false
-      loop:
-        - kubectl delete -f /vagrant/k8s/templates/httpbin.yaml -n foo
-        - kubectl delete -f /vagrant/k8s/templates/httpbin.yaml -n bar
-        - kubectl delete -f /vagrant/k8s/templates/httpbin.yaml -n legacy
-    - name: "Delete sleep test service {{ item }}"
-      command:  "{{ item }}"
-      register: kubectl
-      changed_when: false
-      loop:
-        - kubectl delete -f /vagrant/k8s/templates/sleep.yaml -n foo
-        - kubectl delete -f /vagrant/k8s/templates/sleep.yaml -n bar
-        - kubectl delete -f /vagrant/k8s/templates/sleep.yaml -n legacy
-    - name: "Generte delete istio template"
-      command: /vagrant/istio/release/istioctl-linux-amd64 manifest --set installPackagePath=/vagrant/istio/installs generate -f /vagrant/k8s/templates/single-cluster.yaml 
-      register: kubectl
-      changed_when: false
-    - name: "Create delete istio file"
-      copy:
-        content: "{{ kubectl.stdout }}"
-        dest: /vagrant/k8s/templates/clean-istio.yaml
-      changed_when: false
-    - name: "Delete all deployment {{ item }} namespace"
-      command: "{{ item }}"
-      register: kubectl
-      changed_when: false
-      loop:
-        - kubectl delete deployment --all -n foo
-        - kubectl delete deployment --all -n bar
-        - kubectl delete deployment --all -n legacy   
-    - name: "Delete all secret {{ item }} namespace"
-      command: "{{ item }}"
-      register: kubectl
-      changed_when: false
-      loop:
-        - kubectl delete secret --all -n foo
-        - kubectl delete secret --all -n bar
-        - kubectl delete secret --all -n legacy 
-    - name: "Delete all configmap {{ item }} namespace"
-      command: "{{ item }}"
-      register: kubectl
-      changed_when: false
-      loop:
-        - kubectl delete configmap --all -n foo
-        - kubectl delete configmap --all -n bar
-        - kubectl delete configmap --all -n legacy
-    - name: "Delete all svc {{ item }} namespace"
-      command: "{{ item }}"
-      register: kubectl
-      changed_when: false
-      loop:
-        - kubectl delete svc --all -n foo
-        - kubectl delete svc --all -n bar
-        - kubectl delete svc --all -n legacy   
-    - name: "Delete {{ item }} namespace"
-      command: "{{ item }}"
-      register: kubectl
-      changed_when: false
-      loop:
-        - kubectl delete namespace foo
-        - kubectl delete namespace bar
-        - kubectl delete namespace legacy
+    - name: "Clean up global task"
+      include_role:
+        name: "k8s"
+        tasks_from: cleanup
     - name: "Clean runtime files"
-      file:
-        path: "{{ item }}"
-        state: absent
-      with_items:
-            - /vagrant/k8s/templates/clean-istio.yaml
-            - /vagrant/k8s/templates/cluster-with-secret-run.yaml
-            - /vagrant/k8s/templates/keyfactor-secret-run.yaml
-            - /vagrant/k8s/templates/single-cluster-run.yaml
-            - /vagrant/k8s/templates/single-cluster-a-run.yaml
-            - /vagrant/k8s/templates/single-cluster-b-run.yaml
-            - /vagrant/k8s/templates/serviceentry-cluster-a-run.yaml 
-            - /vagrant/k8s/templates/serviceentry-cluster-b-run.yaml 
-            - /vagrant/k8s/templates/dns-a-run.yaml 
-            - /vagrant/k8s/templates/dns-b-run.yaml
-            - /vagrant/k8s/templates/cluster-with-secret-empty-data-run.yaml
-            - /vagrant/k8s/templates/keyfactor-secret-config-file-run.yaml
-            - /vagrant/k8s/templates/single-cluster-with-vault-run.yaml
-            - /vagrant/k8s/templates/keyfactor-secret-config-another-name-run.yaml
-      changed_when: false
+      include_role:
+        name: "k8s"
+        tasks_from: clean-template-file

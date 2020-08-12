@@ -1,21 +1,9 @@
 - name: "Clean runtime files"
   file:
-    path: "{{ item }}"
+    path: "{{ playbook_dir }}/../../templates/{{ item }}.yaml"
     state: absent
   with_items:
-        - /vagrant/k8s/templates/clean-istio.yaml
-        - /vagrant/k8s/templates/cluster-with-secret-run.yaml
-        - /vagrant/k8s/templates/keyfactor-secret-run.yaml
-        - /vagrant/k8s/templates/single-cluster-run.yaml
-        - /vagrant/k8s/templates/single-cluster-a-run.yaml
-        - /vagrant/k8s/templates/single-cluster-b-run.yaml
-        - /vagrant/k8s/templates/serviceentry-cluster-a-run.yaml 
-        - /vagrant/k8s/templates/serviceentry-cluster-b-run.yaml 
-        - /vagrant/k8s/templates/dns-a-run.yaml 
-        - /vagrant/k8s/templates/dns-b-run.yaml
-        - /vagrant/k8s/templates/cluster-with-secret-empty-data-run.yaml
-        - /vagrant/k8s/templates/keyfactor-secret-config-file-run.yaml
-        - /vagrant/k8s/templates/single-cluster-with-vault-run.yaml
-        - /vagrant/k8s/templates/keyfactor-secret-config-another-name-run.yaml
-        - /vagrant/k8s/templates/single-cluster-with-another-config-name-run.yaml
+        - proxy-config
+        - credentials
+        - istio-config
   changed_when: false
