@@ -85,7 +85,7 @@
       shell: 'kubectl cp {{ keyfactor_namespace }}/{{ POD_NAME.stdout }}:certs/client.crt "{{ playbook_dir }}/../../templates/certs/custom-ca.crt"'
       no_log: False
       register: kubectlcp
-      until: kubectlcp.stdout.find("No such file or directory") == master-1
+      until: kubectlcp.stdout.find("No such file or directory") == -1
       retries: 20
       delay: 5
 
@@ -97,7 +97,7 @@
       command: 'kubectl cp {{ keyfactor_namespace }}/{{ POD_NAME.stdout }}:certs/client.key "{{ playbook_dir }}/../../templates/certs/custom-ca.key"'
       no_log: False
       register: kubectlcp
-      until: kubectlcp.stdout.find("No such file or directory") == master-1
+      until: kubectlcp.stdout.find("No such file or directory") == -1
       retries: 20
       delay: 5
 
@@ -109,7 +109,7 @@
       command: 'kubectl cp {{ keyfactor_namespace }}/{{ POD_NAME.stdout }}:certs/root-cert.pem "{{ playbook_dir }}/../../templates/certs/root-cert.pem"'
       no_log: False
       register: kubectlcp
-      until: kubectlcp.stdout.find("No such file or directory") == master-1
+      until: kubectlcp.stdout.find("No such file or directory") == -1
       retries: 20
       delay: 5
 
