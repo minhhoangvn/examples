@@ -23,7 +23,7 @@ verifier:
   options:
     s: true
   additional_files_or_dirs:
-    - ../../../resources/tests/test_configuration.py
+    - ../../../resources/tests/*.py
 scenario:
   name: default
   test_sequence:
