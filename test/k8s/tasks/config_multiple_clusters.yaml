@@ -38,5 +38,5 @@
 
 - name: Create serviceentrieys config template
   copy:
-    content: "{{ dns }}"
+    content: "{{ serviceentries_file_name }}"
     dest: "{{ playbook_dir }}/../../templates/{{ serviceentries_file_name }}.yaml"

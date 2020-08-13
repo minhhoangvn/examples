@@ -56,7 +56,7 @@
 
     - name: Set ServiceEntries config file name
       set_fact:
-        serviceentries_file_name: "serviceentry-cluster-b"
+        serviceentries_file_name: "serviceentryclusterb"
 
     - name: Render DNS template
       include_role:
@@ -119,7 +119,7 @@
 
     - name: Set ServiceEntries config file name
       set_fact:
-        serviceentries_file_name: "serviceentry-cluster-a"
+        serviceentries_file_name: "serviceentryclustera"
 
     - name: Render DNS template
       include_role:
