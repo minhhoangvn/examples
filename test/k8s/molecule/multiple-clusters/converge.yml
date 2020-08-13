@@ -1,0 +1,138 @@
+---
+- name: Converge
+  hosts: master-1
+  gather_facts: true
+  tasks:
+    - name: "Include global tasks"
+      include_role:
+        name: "k8s"
+    - name: Load variable file
+      include_vars:
+        dir: ../../vars
+
+    - name: Set Keyfactor proxy server chart name
+      set_fact:
+        keyfactor_chart_name: "keyfactor-proxy"
+
+    - name: Set Keyfactor proxy server namespace
+      set_fact:
+        keyfactor_namespace: "keyfactor"
+
+    - name: Get cluster info
+      command: kubectl cluster-info
+      register: kubectl
+      changed_when: false
+
+    - name: Install Keyfactor proxy sever
+      include_role:
+        name: "k8s"
+        tasks_from: install_keyfactor_proxy
+
+    - name: Config istio auto injection
+      include_role:
+        name: "k8s"
+        tasks_from: config_istio_injection
+
+    - name: Install load service
+      include_role:
+        name: "k8s"
+        tasks_from: install_load_services
+
+    - name: Install mTLS policy
+      command: 'kubectl apply -f "{{ playbook_dir }}/../../templates/mtls-policy.yaml" -n istio-system'
+      changed_when: false
+
+    - name: Set DNS config file name
+      set_fact:
+        dns_config_file_name: "dns-a-run"
+
+    - name: Set ServiceEntries config file name
+      set_fact:
+        dns_config_file_name: "serviceentry-cluster-b"
+
+    - name: Render DNS template
+      include_role:
+        name: "k8s"
+        tasks_from: config_multiple_clusters
+
+---
+- name: Converge
+  hosts: master-2
+  gather_facts: true
+  tasks:
+    - name: "Include global tasks"
+      include_role:
+        name: "k8s"
+    - name: Load variable file
+      include_vars:
+        dir: ../../vars
+
+    - name: Set Keyfactor proxy server chart name
+      set_fact:
+        keyfactor_chart_name: "keyfactor-proxy"
+
+    - name: Set Keyfactor proxy server namespace
+      set_fact:
+        keyfactor_namespace: "keyfactor"
+
+    - name: Get cluster info
+      command: kubectl cluster-info
+      register: kubectl
+      changed_when: false
+
+    - name: Install Keyfactor proxy sever
+      include_role:
+        name: "k8s"
+        tasks_from: install_keyfactor_proxy
+
+    - name: Config istio auto injection
+      include_role:
+        name: "k8s"
+        tasks_from: config_istio_injection
+
+    - name: Install load service
+      include_role:
+        name: "k8s"
+        tasks_from: install_load_services
+
+    - name: Install mTLS policy
+      command: 'kubectl apply -f "{{ playbook_dir }}/../../templates/mtls-policy.yaml" -n istio-system'
+      changed_when: false
+
+    - name: Set DNS config file name
+      set_fact:
+        dns_config_file_name: "dns-b-run"
+
+    - name: Set ServiceEntries config file name
+      set_fact:
+        dns_config_file_name: "serviceentry-cluster-a"
+
+    - name: Render DNS template
+      include_role:
+        name: "k8s"
+        tasks_from: config_multiple_clusters
+
+---
+- name: Converge
+  hosts: master-1
+  gather_facts: true
+  tasks:
+    - name: Configure service entry in coreDNS
+      command: 'kubectl apply -f  "{{ playbook_dir }}/../../templates/serviceentry-cluster-a.yaml" -n {{ item }}'
+      loop:
+        - foo
+        - bar
+        - legacy
+        - default
+
+- name: Converge
+  hosts: master-2
+  gather_facts: true
+  tasks:
+    - name: Configure service entry in coreDNS
+      command: 'kubectl apply -f  "{{ playbook_dir }}/../../templates/serviceentry-cluster-b.yaml" -n {{ item }}'
+      loop:
+        - foo
+        - bar
+        - legacy
+        - default

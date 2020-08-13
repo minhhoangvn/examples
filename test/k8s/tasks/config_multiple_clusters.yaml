@@ -1,0 +1,38 @@
+- name: Get IstioCoreDNS cluster a IP
+  command: kubectl get svc -n istio-system istiocoredns -o jsonpath={.spec.clusterIP}
+  register: kubectllog
+  changed_when: false
+
+- name: Get Cluster IP
+  set_fact:
+    dns_cluster_ip: "{{ kubectl.stdout }}"
+
+- name: Render multiple clusters DNS deployment template
+  set_fact:
+    "{{ item }}": "{{ lookup('template', playbook_dir + '/../../templates/config/'+ item + '.yaml.j2') }}"
+  with_items:
+    - "dns"
+
+- name: Create DNS config template
+  copy:
+    content: "{{ dns }}"
+    dest: "{{ playbook_dir }}/../../templates/{{ dns_config_file_name }}.yaml"
+
+- name: Config DNS clusterIP
+  command:  'kubectl apply -f "{{ playbook_dir }}/../../templates/{{ dns_config_file_name }}.yaml"'
+
+- name: Get IstioIngressGateway Nodeport
+  command: kubectl get svc -n istio-system istio-ingressgateway -o=jsonpath='{.spec.ports[?(@.port==15443)].nodePort}'
+  register: kubectl
+  changed_when: false  
+
+- name: Render multiple clusters serviceentries deployment template
+  set_fact:
+    "{{ item }}": "{{ lookup('template', playbook_dir + '/../../templates/config/'+ item + '.yaml.j2') }}"
+  with_items:
+    - "{{ serviceentries_file_name }}"
+
+- name: Create serviceentrieys config template
+  copy:
+    content: "{{ dns }}"
+    dest: "{{ playbook_dir }}/../../templates/{{ serviceentries_file_name }}.yaml"
