@@ -140,7 +140,6 @@
         - foo
         - bar
         - legacy
-        - default
 
 - name: Converge
   hosts: master-2
@@ -152,4 +151,3 @@
         - foo
         - bar
         - legacy
-        - default
