@@ -8,6 +8,8 @@ spec:
   installPackagePath: "charts"
   profile: "{{ istio_profile }}"
   components:
+    istioCoreDNS:
+      enabled: true
     pilot:
       enabled: true
       k8s:
