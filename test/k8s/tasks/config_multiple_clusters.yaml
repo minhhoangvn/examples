@@ -26,6 +26,10 @@
   register: kubectllog
   changed_when: false  
 
+- name: Set mtls_port value
+  set_fact:
+    mtls_port: {{ kubectllog.stdout }}
+    
 - name: Render multiple clusters serviceentries deployment template
   set_fact:
     "{{ item }}": "{{ lookup('template', playbook_dir + '/../../templates/config/'+ item + '.yaml.j2') }}"
