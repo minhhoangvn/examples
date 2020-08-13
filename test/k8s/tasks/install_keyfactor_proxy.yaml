@@ -55,6 +55,14 @@
   debug:
     var: kubectlcp
 
+- name: Wait until the file custom-ca.crt is present before continuing
+  wait_for:
+    path: "{{ playbook_dir }}/../../templates/certs/custom-ca.crt"
+    sleep: 5
+    timeout: 60
+    state: present
+    msg: 'Timeout to find file "{{ playbook_dir }}/../../templates/certs/custom-ca.crt"'
+
 - name: "Copy custom-ca.key in Keyfactor proxy server {{ POD_NAME.stdout }}"
   command: 'kubectl cp {{ keyfactor_namespace }}/{{ POD_NAME.stdout }}:certs/client.key "{{ playbook_dir }}/../../templates/certs/custom-ca.key"'
   no_log: False
@@ -67,6 +75,14 @@
   debug:
     var: kubectlcp
 
+- name: Wait until the file custom-ca.key is present before continuing
+  wait_for:
+    path: "{{ playbook_dir }}/../../templates/certs/custom-ca.key"
+    sleep: 5
+    timeout: 60
+    state: present
+    msg: 'Timeout to find file "{{ playbook_dir }}/../../templates/certs/custom-ca.key"'
+
 - name: "Copy root-cert.pem in Keyfactor proxy server {{ POD_NAME.stdout }}"
   command: 'kubectl cp {{ keyfactor_namespace }}/{{ POD_NAME.stdout }}:certs/root-cert.pem "{{ playbook_dir }}/../../templates/certs/root-cert.pem"'
   no_log: False
@@ -78,6 +94,14 @@
 - name: Debug copy file logs
   debug:
     var: kubectlcp
+
+- name: Wait until the file root-cert.pem is present before continuing
+  wait_for:
+    path: "{{ playbook_dir }}/../../templates/certs/root-cert.pem"
+    sleep: 5
+    timeout: 60
+    state: present
+    msg: 'Timeout to find file "{{ playbook_dir }}/../../templates/certs/root-cert.pem"'
 
 - name: Create ca-cert generic secret IstioD
   command: 'kubectl create secret generic cacerts -n istio-system --from-file "{{ playbook_dir }}/../../templates/certs/root-cert.pem" --from-file "{{ playbook_dir }}/../../templates/certs/custom-ca.crt" --from-file "{{ playbook_dir }}/../../templates/certs/custom-ca.key"'
