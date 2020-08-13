@@ -5,8 +5,8 @@
   with_items:
         - dns-a-run
         - dns-b-run
-        - serviceentry-cluster-a
-        - serviceentry-cluster-b
+        - serviceentryclustera
+        - serviceentryclusterb
         - proxy-config
         - credentials
         - istio-config

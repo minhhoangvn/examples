@@ -135,7 +135,7 @@
   gather_facts: true
   tasks:
     - name: Configure service entry in coreDNS
-      command: 'kubectl apply -f  "{{ playbook_dir }}/../../templates/serviceentry-cluster-a.yaml" -n {{ item }}'
+      command: 'kubectl apply -f  "{{ playbook_dir }}/../../templates/serviceentryclustera.yaml" -n {{ item }}'
       loop:
         - foo
         - bar
@@ -147,7 +147,7 @@
   gather_facts: true
   tasks:
     - name: Configure service entry in coreDNS
-      command: 'kubectl apply -f  "{{ playbook_dir }}/../../templates/serviceentry-cluster-b.yaml" -n {{ item }}'
+      command: 'kubectl apply -f  "{{ playbook_dir }}/../../templates/serviceentryclusterb.yaml" -n {{ item }}'
       loop:
         - foo
         - bar
