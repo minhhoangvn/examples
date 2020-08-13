@@ -15,3 +15,12 @@ spec:
           - name: CUSTOM_CA_ADDR
             # The address of Keyfactor-Proxy
             value: "{{ keyfactor_chart_name }}-keyfactor-k8s.{{ keyfactor_namespace }}.svc.cluster.local:8932"
+  values:
+    global:
+      imagePullPolicy: "Always"
+      multiCluster:
+        enabled: true
+        clusterName: "{{ cluster_name }}"
+      podDNSSearchNamespaces:
+        - global
+      controlPlaneSecurityEnabled: true

@@ -18,6 +18,10 @@
       set_fact:
         keyfactor_namespace: "keyfactor"
 
+    - name: Set cluster name
+      set_fact:
+        cluster_name: "SingleCluster"
+
     - name: Get cluster info
       command: kubectl cluster-info
       register: kubectl
