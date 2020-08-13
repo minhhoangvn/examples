@@ -11,6 +11,9 @@ spec:
     istiocoredns:
       enabled: true  
   components:
+    egressGateways:
+      - name: istio-egressgateway
+        enabled: true
     pilot:
       enabled: true
       k8s:
