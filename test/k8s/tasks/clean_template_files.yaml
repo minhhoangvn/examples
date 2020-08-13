@@ -3,6 +3,10 @@
     path: "{{ playbook_dir }}/../../templates/{{ item }}.yaml"
     state: absent
   with_items:
+        - dns-a-run
+        - dns-b-run
+        - serviceentry-cluster-a
+        - serviceentry-cluster-b
         - proxy-config
         - credentials
         - istio-config
