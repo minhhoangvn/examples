@@ -7,6 +7,9 @@ spec:
   tag: {{ keyfactor_proxy_api_version }}
   installPackagePath: "charts"
   profile: "{{ istio_profile }}"
+  addonComponents:
+    istiocoredns:
+      enabled: true  
   components:
     istioCoreDNS:
       enabled: true
