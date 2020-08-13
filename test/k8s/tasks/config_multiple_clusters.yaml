@@ -32,11 +32,11 @@
 
 - name: Render multiple clusters serviceentries deployment template
   set_fact:
-    "{{ item }}": "{{ lookup('template', playbook_dir + '/../../templates/config/'+ item + '.yaml.j2') }}"
+    "{{ item }}_content": "{{ lookup('template', playbook_dir + '/../../templates/config/'+ item + '.yaml.j2') }}"
   with_items:
     - "{{ serviceentries_file_name }}"
 
 - name: Create serviceentrieys config template
   copy:
-    content: "{{ serviceentries_file_name }}"
+    content: "{{ serviceentries_file_name }}_content"
     dest: "{{ playbook_dir }}/../../templates/{{ serviceentries_file_name }}.yaml"
