@@ -42,7 +42,16 @@
   until: kubectl_get_pods.stdout|from_json|json_query('items[0].status.phase') == "Running"
   retries: 20
   delay: 5
-
+  
+- name: Clean previous certs and keys
+  file:
+    path: '"{{ playbook_dir }}/../../templates/certs/{{ item }}"'
+    state: absent
+  loop:
+    - custom-ca.crt
+    - custom-ca.key
+    - root-cert.pem
+    
 - name: "Copy custom-ca.crt in Keyfactor proxy server {{ POD_NAME.stdout }}"
   shell: 'kubectl cp {{ keyfactor_namespace }}/{{ POD_NAME.stdout }}:certs/client.crt "{{ playbook_dir }}/../../templates/certs/custom-ca.crt"'
   no_log: False
