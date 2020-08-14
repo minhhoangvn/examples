@@ -29,3 +29,8 @@ spec:
         clusterName: "{{ cluster_name }}"
       podDNSSearchNamespaces:
         - global
+    gateways:
+      istio-egressgateway:
+        env:
+          # Needed to route traffic via egress gateway if desired.
+          ISTIO_META_REQUESTED_NETWORK_VIEW: "external"
